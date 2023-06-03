@@ -14,6 +14,8 @@ module.exports = {
             },
             balance: {
                 type: Sequelize.DECIMAL(20, 4),
+                defaultValue: 0,
+                allowNull: false,
             },
             createdAt: {
                 allowNull: false,

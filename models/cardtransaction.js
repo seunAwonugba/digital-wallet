@@ -9,13 +9,23 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            CardTransaction.belongsTo(models.account);
         }
     }
     CardTransaction.init(
         {
             externalReference: {
                 type: DataTypes.STRING,
-                unique: true,
+                unique: {
+                    args: true,
+                    msg: "Transaction with this external reference already exist",
+                },
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Transaction external reference is required",
+                    },
+                },
             },
             lastResponse: {
                 type: DataTypes.STRING,
@@ -23,11 +33,25 @@ module.exports = (sequelize, DataTypes) => {
             },
             amount: {
                 type: DataTypes.DECIMAL(20, 4),
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Transaction amount is required",
+                    },
+                },
+            },
+            metadata: {
+                type: DataTypes.JSON,
                 allowNull: true,
             },
             accountId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Account ID reference is required",
+                    },
+                },
             },
         },
         {

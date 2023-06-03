@@ -12,6 +12,12 @@ module.exports = {
             externalReference: {
                 type: Sequelize.STRING,
                 allowNull: false,
+                unique: true,
+                validate: {
+                    notEmpty: {
+                        msg: "Transaction external reference is required",
+                    },
+                },
             },
             lastResponse: {
                 type: Sequelize.STRING,
@@ -20,10 +26,24 @@ module.exports = {
             amount: {
                 type: Sequelize.DECIMAL(20, 4),
                 allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Transaction amount is required",
+                    },
+                },
+            },
+            metadata: {
+                type: Sequelize.JSON,
+                allowNull: true,
             },
             accountId: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Account ID reference is required",
+                    },
+                },
             },
             createdAt: {
                 allowNull: false,

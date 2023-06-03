@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     Account.init(
         {
             userId: DataTypes.INTEGER,
-            balance: DataTypes.DECIMAL(20, 4),
+            balance: {
+                type: DataTypes.DECIMAL(20, 4),
+                allowNull: false,
+                defaultValue: 0,
+            },
         },
         {
             sequelize,
