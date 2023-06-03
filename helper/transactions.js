@@ -6,14 +6,7 @@ const { CheckAccountBalance } = require("../utils");
 const accountService = new AccountService();
 const transactionService = new TransactionService();
 
-async function creditAccount({
-    action,
-    amount,
-    accountId,
-    reference = v4(),
-    metadata,
-    t,
-}) {
+async function creditAccount({ action, amount, accountId, metadata, t }) {
     const account = await accountService.findAccountById(accountId);
 
     await accountService.increaseBalance(amount, t);
@@ -23,7 +16,7 @@ async function creditAccount({
         action,
         amount,
         accountId: account.data.id,
-        reference,
+        reference: v4(),
         metadata,
         balanceBefore: Number(account.data.balance),
         balanceAfter: Number(account.data.balance) + Number(amount),
@@ -40,7 +33,6 @@ async function debitAccount({
     action,
     amount,
     accountId,
-    reference = v4(),
     metadata,
     t,
 }) {
@@ -66,7 +58,7 @@ async function debitAccount({
         action,
         amount,
         accountId: account.data.id,
-        reference,
+        reference: v4(),
         metadata,
         balanceBefore: Number(account.data.balance),
         balanceAfter: Number(account.data.balance) - Number(amount),
