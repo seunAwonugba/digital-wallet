@@ -3,17 +3,22 @@ require("dotenv").config();
 const express = require("express");
 const { StatusCodes, ReasonPhrases } = require("http-status-codes");
 const { sequelize } = require("./models");
+const { cardRouter } = require("./router");
+const { errorMiddleware } = require("./middleware/errormiddleware");
 const app = express();
 
 const host = process.env.HOST;
 const port = process.env.PORT || 8000;
 
+app.use(express.json());
 app.get("/", (req, res) => {
     res.status(StatusCodes.OK).json({
         success: true,
         data: ReasonPhrases.OK,
     });
 });
+
+app.use("/api/v1/card", cardRouter);
 
 app.all("*", (req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({
@@ -22,6 +27,7 @@ app.all("*", (req, res) => {
     });
 });
 
+app.use(errorMiddleware);
 const startServer = async () => {
     try {
         await sequelize.authenticate();

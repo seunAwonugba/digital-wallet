@@ -31,6 +31,7 @@ class Card {
                 expiry_year: expiryYear,
             },
         };
+        console.log(body);
         const t = await sequelize.transaction();
         try {
             const response = await request.post("/charge", body);
