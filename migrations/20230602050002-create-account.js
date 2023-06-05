@@ -9,13 +9,20 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER,
             },
-            userId: {
-                type: Sequelize.INTEGER,
-            },
             balance: {
                 type: Sequelize.DECIMAL(20, 4),
                 defaultValue: 0,
                 allowNull: false,
+            },
+            userId: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                unique: true,
+                validate: {
+                    notEmpty: {
+                        msg: "User ID is required",
+                    },
+                },
             },
             createdAt: {
                 allowNull: false,

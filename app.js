@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const { StatusCodes, ReasonPhrases } = require("http-status-codes");
 const { sequelize } = require("./models");
-const { cardRouter } = require("./router");
+const { card, user } = require("./router");
 const { errorMiddleware } = require("./middleware/errormiddleware");
 const app = express();
 
@@ -18,7 +18,8 @@ app.get("/", (req, res) => {
     });
 });
 
-app.use("/api/v1/card", cardRouter);
+app.use("/api/v1/card", card);
+app.use("/api/v1/user", user);
 
 app.all("*", (req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({

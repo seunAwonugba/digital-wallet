@@ -9,7 +9,9 @@ const transactionService = new TransactionService();
 async function creditAccount({ action, amount, accountId, metadata, t }) {
     const account = await accountService.findAccountById(accountId);
 
-    await accountService.increaseBalance(amount, t);
+    await accountService.increaseBalance(amount, t, accountId);
+
+    // console.log(increaseBalance);
 
     const transaction = await transactionService.createTransaction({
         transactionType: "credit",
@@ -23,19 +25,10 @@ async function creditAccount({ action, amount, accountId, metadata, t }) {
         t,
     });
 
-    return {
-        success: true,
-        data: transaction,
-    };
+    return transaction;
 }
 
-async function debitAccount({
-    action,
-    amount,
-    accountId,
-    metadata,
-    t,
-}) {
+async function debitAccount({ action, amount, accountId, metadata, t }) {
     const account = await accountService.findAccountById(accountId);
 
     const checkAccountBalance = CheckAccountBalance(

@@ -11,18 +11,43 @@ module.exports = {
             },
             firstName: {
                 type: Sequelize.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "First name is required",
+                    },
+                },
             },
             lastName: {
                 type: Sequelize.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Last name is required",
+                    },
+                },
             },
             email: {
                 type: Sequelize.STRING,
-            },
-            username: {
-                type: Sequelize.STRING,
+                allowNull: false,
+                unique: true,
+                validate: {
+                    isEmail: {
+                        msg: "Please provide a valid email address",
+                    },
+                    notEmpty: {
+                        msg: "Email address is required",
+                    },
+                },
             },
             password: {
                 type: Sequelize.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Password is required",
+                    },
+                },
             },
             createdAt: {
                 allowNull: false,

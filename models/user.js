@@ -13,14 +13,56 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "userId",
             });
         }
+
+        toJSON() {
+            return { ...this.get(), password: undefined };
+        }
     }
     User.init(
         {
-            firstName: DataTypes.STRING,
-            lastName: DataTypes.STRING,
-            email: DataTypes.STRING,
-            username: DataTypes.STRING,
-            password: DataTypes.STRING,
+            firstName: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "First name is required",
+                    },
+                },
+            },
+            lastName: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Last name is required",
+                    },
+                },
+            },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: {
+                    args: true,
+                    msg: "Email address already exist",
+                },
+                validate: {
+                    isEmail: {
+                        msg: "Please provide a valid email address",
+                    },
+                    notEmpty: {
+                        msg: "Email address is required",
+                    },
+                },
+            },
+            password: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Password is required",
+                    },
+                },
+            },
         },
         {
             sequelize,

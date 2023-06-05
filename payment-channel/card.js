@@ -1,15 +1,9 @@
 const { creditAccount } = require("../helper/transactions");
 const { request } = require("../request");
 const { sequelize } = require("../models");
-const {
-    CardTransactionService,
-} = require("../service/card-transaction-service");
 const { SaveTransactionChannel } = require(".");
 require("dotenv").config();
 class Card {
-    constructor() {
-        this.cardTransactionService = new CardTransactionService();
-    }
     async chargeCard({
         cardNumber,
         cvv,
@@ -31,11 +25,9 @@ class Card {
                 expiry_year: expiryYear,
             },
         };
-        console.log(body);
         const t = await sequelize.transaction();
         try {
             const response = await request.post("/charge", body);
-            console.log(response);
 
             if (response.data.data.status === false) {
                 console.log(response.data.data.message);
@@ -59,13 +51,15 @@ class Card {
                 signature: response.data.data.authorization.signature,
             };
 
-            const creditAccount = await creditAccount({
+            const credit = await creditAccount({
                 action: "card_funding",
                 amount,
                 accountId,
                 metadata,
                 t,
             });
+
+            // console.log(credit);
 
             await SaveTransactionChannel(
                 channel,
@@ -79,11 +73,9 @@ class Card {
 
             await t.commit();
 
-            return {
-                success: true,
-                data: creditAccount,
-            };
+            return credit;
         } catch (error) {
+            console.log(error);
             await t.rollback();
             return error;
         }

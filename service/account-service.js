@@ -7,7 +7,7 @@ class AccountService {
     }
 
     async findAccountById(id) {
-        const account = this.accountRepository.findAccountById(id);
+        const account = await this.accountRepository.findAccountById(id);
 
         if (!account) {
             throw new BadRequest("Account not found");
@@ -20,11 +20,14 @@ class AccountService {
     }
 
     //-value for reduction
-    async increaseBalance(value, t) {
-        const increaseBalance = this.accountRepository.increaseBalance(
+    async increaseBalance(value, t, accountId) {
+        const increaseBalance = await this.accountRepository.increaseBalance(
             value,
-            t
+            t,
+            accountId
         );
+
+        // console.log(increaseBalance);
 
         return {
             success: true,

@@ -14,7 +14,7 @@ module.exports.SaveTransactionChannel = async (
     t
 ) => {
     switch (channel) {
-        case card:
+        case "card":
             await cardTransactionService.createCardTransaction({
                 externalReference,
                 lastResponse,

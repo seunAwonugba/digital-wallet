@@ -20,11 +20,23 @@ module.exports = (sequelize, DataTypes) => {
     }
     Account.init(
         {
-            userId: DataTypes.INTEGER,
             balance: {
                 type: DataTypes.DECIMAL(20, 4),
                 allowNull: false,
                 defaultValue: 0,
+            },
+            userId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                unique: {
+                    args: true,
+                    msg: "User with this ID already exist",
+                },
+                validate: {
+                    notEmpty: {
+                        msg: "User ID is required",
+                    },
+                },
             },
         },
         {

@@ -1,8 +1,10 @@
+const { StatusCodes } = require("http-status-codes");
 const { Card } = require("../payment-channel/card");
 
-const card = new Card();
 const chargeCard = async (req, res, next) => {
     try {
+        const card = new Card(); // Instantiate the Card class
+
         const chargeCard = await card.chargeCard({
             cardNumber: req.body.card.number,
             cvv: req.body.card.cvv,
@@ -13,9 +15,9 @@ const chargeCard = async (req, res, next) => {
             amount: req.body.amount,
             accountId: 1,
         });
-        return chargeCard;
+        return res.status(StatusCodes.OK).json(chargeCard);
     } catch (error) {
-        next();
+        next(error);
     }
 };
 
