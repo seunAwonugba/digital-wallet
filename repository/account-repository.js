@@ -16,8 +16,6 @@ class AccountRepository {
             },
         });
 
-        console.log(increaseBalance);
-
         return increaseBalance;
     }
 

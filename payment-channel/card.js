@@ -2,6 +2,8 @@ const { creditAccount } = require("../helper/transactions");
 const { request } = require("../request");
 const { sequelize } = require("../models");
 const { SaveTransactionChannel } = require(".");
+const { BadRequest } = require("../error");
+const { HandleResponseStatus } = require("../response");
 require("dotenv").config();
 class Card {
     async chargeCard({
@@ -13,6 +15,10 @@ class Card {
         email,
         amount,
         accountId,
+        otp,
+        phone,
+        birthday,
+        address,
     }) {
         const body = {
             email,
@@ -28,6 +34,21 @@ class Card {
         const t = await sequelize.transaction();
         try {
             const response = await request.post("/charge", body);
+
+            const ref = response.data.data.reference;
+            const status = response.data.data.status;
+
+            if (status) {
+                const statusResponse = await HandleResponseStatus(
+                    status,
+                    ref,
+                    body.card.pin,
+                    accountId,
+                    t
+                );
+
+                return statusResponse;
+            }
 
             if (response.data.data.status === false) {
                 console.log(response.data.data.message);
@@ -59,8 +80,6 @@ class Card {
                 t,
             });
 
-            // console.log(credit);
-
             await SaveTransactionChannel(
                 channel,
                 externalReference,
@@ -75,7 +94,6 @@ class Card {
 
             return credit;
         } catch (error) {
-            console.log(error);
             await t.rollback();
             return error;
         }

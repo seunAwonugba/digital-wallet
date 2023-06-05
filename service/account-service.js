@@ -27,8 +27,6 @@ class AccountService {
             accountId
         );
 
-        // console.log(increaseBalance);
-
         return {
             success: true,
             data: increaseBalance,

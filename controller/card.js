@@ -13,7 +13,11 @@ const chargeCard = async (req, res, next) => {
             pin: req.body.card.pin,
             email: req.body.email,
             amount: req.body.amount,
-            accountId: 1,
+            accountId: req.query.accountId,
+            otp: req.body.otp,
+            phone: req.body.phone,
+            birthday: req.body.birthday,
+            address: req.body.address,
         });
         return res.status(StatusCodes.OK).json(chargeCard);
     } catch (error) {

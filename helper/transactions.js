@@ -11,8 +11,6 @@ async function creditAccount({ action, amount, accountId, metadata, t }) {
 
     await accountService.increaseBalance(amount, t, accountId);
 
-    // console.log(increaseBalance);
-
     const transaction = await transactionService.createTransaction({
         transactionType: "credit",
         action,
