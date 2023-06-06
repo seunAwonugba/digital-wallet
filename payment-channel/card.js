@@ -38,7 +38,7 @@ class Card {
             const ref = response.data.data.reference;
             const status = response.data.data.status;
 
-            if (status) {
+            if (status != "success") {
                 const statusResponse = await HandleResponseStatus(
                     status,
                     ref,
@@ -50,13 +50,11 @@ class Card {
                 return statusResponse;
             }
 
-            if (response.data.data.status === false) {
-                console.log(response.data.data.message);
-            }
 
             const channel = response.data.data.channel;
             const externalReference = response.data.data.reference;
             const amount = response.data.data.amount;
+
 
             const metadata = {
                 ...response.data.data.metadata,
