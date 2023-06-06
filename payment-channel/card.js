@@ -50,11 +50,9 @@ class Card {
                 return statusResponse;
             }
 
-
             const channel = response.data.data.channel;
             const externalReference = response.data.data.reference;
             const amount = response.data.data.amount;
-
 
             const metadata = {
                 ...response.data.data.metadata,
@@ -93,7 +91,10 @@ class Card {
             return credit;
         } catch (error) {
             await t.rollback();
-            return error;
+            if (error.response.data.data) {
+                throw new BadRequest(error.response.data.data.message);
+            }
+            throw new BadRequest(error.response.data.message);
         }
     }
 }
