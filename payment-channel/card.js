@@ -37,6 +37,7 @@ class Card {
 
             const ref = response.data.data.reference;
             const status = response.data.data.status;
+            console.log(response);
 
             if (status != "success") {
                 const statusResponse = await HandleResponseStatus(
@@ -90,6 +91,7 @@ class Card {
 
             return credit;
         } catch (error) {
+            // console.log(error.response);
             await t.rollback();
             if (error.response.data.data) {
                 throw new BadRequest(error.response.data.data.message);
