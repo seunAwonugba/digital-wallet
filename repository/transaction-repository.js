@@ -31,6 +31,12 @@ class TransactionRepository {
 
         return createTransaction;
     }
+
+    async getTransactionByTransactionId(transactionId) {
+        const getTransaction = await transaction.findByPk(transactionId);
+
+        return getTransaction;
+    }
 }
 
 module.exports = { TransactionRepository };

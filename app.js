@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const { StatusCodes, ReasonPhrases } = require("http-status-codes");
 const { sequelize } = require("./models");
-const { card, user, webhookRouter } = require("./router");
+const { card, user, webhookRouter, transaction } = require("./router");
 const { errorMiddleware } = require("./middleware/errormiddleware");
 const app = express();
 
@@ -21,6 +21,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/card", card);
 app.use("/api/v1/user", user);
 app.use("/api/v1/webhook", webhookRouter);
+app.use("/api/v1/transaction", transaction);
 
 app.all("*", (req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({

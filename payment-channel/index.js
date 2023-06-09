@@ -33,29 +33,27 @@ module.exports.SaveTransactionChannel = async (
     }
 };
 
-module.exports.SubmitPin = async (ref, pin, accountId, t) => {
+module.exports.SubmitPin = async (ref, pin, otp, accountId, t) => {
     const payload = {
         pin,
         reference: ref,
     };
     try {
         const response = await request.post("/charge/submit_pin", payload);
+        const status = response.data.data.status;
+
+        if (status == "send_otp") {
+            return this.SubmitOtp(otp, ref, accountId, t);
+        }
+
         const channel = response.data.data.channel;
         const externalReference = response.data.data.reference;
         const amount = response.data.data.amount;
+        const lastResponse = response.data.data.gateway_response;
 
         const metadata = {
             ...response.data.data.metadata,
-            transactionReference: externalReference,
-            transactionStatus: response.data.data.status,
-            gatewayResponse: response.data.data.gateway_response,
-            channel,
-            currency: response.data.data.currency,
-            ipAddress: response.data.data.ip_address,
-            cardType: response.data.data.authorization.card_type,
-            bank: response.data.data.authorization.bank,
-            brand: response.data.data.authorization.brand,
-            signature: response.data.data.authorization.signature,
+            ...response.data.data.authorization,
         };
 
         const credit = await creditAccount({
@@ -69,11 +67,56 @@ module.exports.SubmitPin = async (ref, pin, accountId, t) => {
         await this.SaveTransactionChannel(
             channel,
             externalReference,
-            "",
+            lastResponse,
             amount,
             metadata,
             accountId
         );
+
+        await t.commit();
+        return credit;
+    } catch (error) {
+        await t.rollback();
+        return error.response.data.data.message;
+    }
+};
+
+module.exports.SubmitOtp = async (otp, ref, accountId, t) => {
+    const payload = {
+        otp,
+        reference: ref,
+    };
+
+    try {
+        const response = await request.post("/charge/submit_otp", payload);
+        const externalReference = response.data.data.reference;
+        const amount = response.data.data.amount;
+        const channel = response.data.data.channel;
+        const lastResponse = response.data.data.gateway_response;
+
+        const metadata = {
+            ...response.data.data.metadata,
+            ...response.data.data.authorization,
+        };
+
+        const credit = await creditAccount({
+            action: "card_funding_with_otp",
+            amount,
+            accountId,
+            metadata,
+            t,
+        });
+
+        await this.SaveTransactionChannel(
+            channel,
+            externalReference,
+            lastResponse,
+            amount,
+            metadata,
+            accountId,
+            t
+        );
+
 
         await t.commit();
         return credit;

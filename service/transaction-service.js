@@ -40,6 +40,18 @@ class TransactionService {
             data: createTransaction,
         };
     }
+
+    async getTransactionByTransactionId(transactionId) {
+        const getTransaction =
+            await this.transactionRepository.getTransactionByTransactionId(
+                transactionId
+            );
+
+        return {
+            success: true,
+            data: getTransaction,
+        };
+    }
 }
 
 module.exports = { TransactionService };

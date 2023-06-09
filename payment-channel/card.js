@@ -30,6 +30,7 @@ class Card {
                 expiry_month: expiryMonth,
                 expiry_year: expiryYear,
             },
+            otp,
         };
         const t = await sequelize.transaction();
         try {
@@ -37,13 +38,13 @@ class Card {
 
             const ref = response.data.data.reference;
             const status = response.data.data.status;
-            console.log(response);
 
             if (status != "success") {
                 const statusResponse = await HandleResponseStatus(
                     status,
                     ref,
                     body.card.pin,
+                    otp,
                     accountId,
                     t
                 );
@@ -54,19 +55,11 @@ class Card {
             const channel = response.data.data.channel;
             const externalReference = response.data.data.reference;
             const amount = response.data.data.amount;
+            const lastResponse = response.data.data.gateway_response;
 
             const metadata = {
                 ...response.data.data.metadata,
-                transactionReference: externalReference,
-                transactionStatus: response.data.data.status,
-                gatewayResponse: response.data.data.gateway_response,
-                channel,
-                currency: response.data.data.currency,
-                ipAddress: response.data.data.ip_address,
-                cardType: response.data.data.authorization.card_type,
-                bank: response.data.data.authorization.bank,
-                brand: response.data.data.authorization.brand,
-                signature: response.data.data.authorization.signature,
+                ...response.data.data.authorization,
             };
 
             const credit = await creditAccount({
@@ -80,7 +73,7 @@ class Card {
             await SaveTransactionChannel(
                 channel,
                 externalReference,
-                "",
+                lastResponse,
                 amount,
                 metadata,
                 accountId,
@@ -91,7 +84,6 @@ class Card {
 
             return credit;
         } catch (error) {
-            // console.log(error.response);
             await t.rollback();
             if (error.response.data.data) {
                 throw new BadRequest(error.response.data.data.message);
