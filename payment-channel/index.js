@@ -116,8 +116,7 @@ module.exports.SubmitOtp = async (otp, ref, accountId, t) => {
             accountId,
             t
         );
-
-
+        
         await t.commit();
         return credit;
     } catch (error) {

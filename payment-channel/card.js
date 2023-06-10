@@ -32,6 +32,7 @@ class Card {
             },
             otp,
         };
+
         const t = await sequelize.transaction();
         try {
             const response = await request.post("/charge", body);

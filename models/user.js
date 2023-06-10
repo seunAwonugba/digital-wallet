@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
             User.hasOne(models.account, {
                 foreignKey: "userId",
             });
+            User.hasMany(models.subscription, {
+                foreignKey: "userId",
+            });
         }
 
         toJSON() {

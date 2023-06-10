@@ -18,6 +18,8 @@ const chargeCard = async (req, res, next) => {
             phone: req.body.phone,
             birthday: req.body.birthday,
             address: req.body.address,
+            subscribed: req.body.subscribed,
+            plan: req.body.plan,
         });
         return res.status(StatusCodes.OK).json(chargeCard);
     } catch (error) {
