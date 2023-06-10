@@ -69,6 +69,8 @@ class Card {
                 accountId,
                 metadata,
                 t,
+                email: response.data.data.customer.email,
+                paystackCustomerCode: response.data.data.customer.customer_code,
             });
 
             await SaveTransactionChannel(

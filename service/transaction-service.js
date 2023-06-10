@@ -17,6 +17,8 @@ class TransactionService {
         metadata,
         balanceBefore,
         balanceAfter,
+        email,
+        paystackCustomerCode,
         t,
     }) {
         if (!amount) {
@@ -32,6 +34,8 @@ class TransactionService {
                 metadata,
                 balanceBefore,
                 balanceAfter,
+                email,
+                paystackCustomerCode,
                 t,
             });
 
@@ -46,6 +50,16 @@ class TransactionService {
             await this.transactionRepository.getTransactionByTransactionId(
                 transactionId
             );
+
+        return {
+            success: true,
+            data: getTransaction,
+        };
+    }
+
+    async getTransactionByEmail(email) {
+        const getTransaction =
+            await this.transactionRepository.getTransactionByEmail(email);
 
         return {
             success: true,

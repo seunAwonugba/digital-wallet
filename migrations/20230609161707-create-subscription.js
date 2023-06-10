@@ -21,12 +21,16 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            subscriptionReference: {
+            subscriptionCode: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            metadata: {
-                type: Sequelize.JSON,
+            nextPaymentDate: {
+                type: Sequelize.DATE,
+                allowNull: false,
+            },
+            status: {
+                type: Sequelize.STRING,
                 allowNull: false,
             },
             userId: {

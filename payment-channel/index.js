@@ -63,6 +63,8 @@ module.exports.SubmitPin = async (ref, pin, otp, accountId, t) => {
             accountId,
             metadata,
             t,
+            email: response.data.data.customer.email,
+            paystackCustomerCode: response.data.data.customer.customer_code,
         });
 
         await this.SaveTransactionChannel(
@@ -117,6 +119,8 @@ module.exports.SubmitOtp = async (otp, ref, accountId, t) => {
             accountId,
             metadata,
             t,
+            email: response.data.data.customer.email,
+            paystackCustomerCode: response.data.data.customer.customer_code,
         });
 
         await this.SaveTransactionChannel(
@@ -145,5 +149,14 @@ module.exports.SubmitOtp = async (otp, ref, accountId, t) => {
                 "An error occurred during the charge card process with otp"
             );
         }
+    }
+};
+
+module.exports.Subscribe = async (body) => {
+    try {
+        const response = await request.post("/subscription", body);
+        return response.data;
+    } catch (error) {
+        return error;
     }
 };

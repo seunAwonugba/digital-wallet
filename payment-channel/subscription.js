@@ -1,14 +1,17 @@
 require("dotenv").config();
+const { Subscribe } = require(".");
 const { BadRequest } = require("../error");
 const { sequelize } = require("../models");
 const { request } = require("../request");
 const { SubscriptionService } = require("../service/subscription-service");
+const { TransactionService } = require("../service/transaction-service");
 const { Card } = require("./card");
 
 class Subscription {
     constructor() {
         this.subscriptionService = new SubscriptionService();
         this.card = new Card();
+        this.transactionService = new TransactionService();
     }
 
     async subscribe(data, accountId, userId) {
@@ -42,22 +45,23 @@ class Subscription {
                 break;
         }
 
-        const body = {
-            email,
-            amount,
-            plan: planId,
-        };
-
         const t = await sequelize.transaction();
 
         try {
-            const response = await request.post(
-                "/transaction/initialize",
-                body
-            );
+            const checkFirstTimeUser =
+                await this.transactionService.getTransactionByEmail(email);
 
-            if (!response.data.status) {
-                return;
+            if (checkFirstTimeUser.data) {
+                const body = {
+                    amount,
+                    customer: checkFirstTimeUser.data.paystackCustomerCode,
+                    plan: planId,
+                };
+
+                const response = await request.post("/subscription", body);
+                console.log(response);
+
+                return response;
             }
 
             const cardNumber = data.card.number;
@@ -78,7 +82,7 @@ class Subscription {
                 expiryYear,
                 pin,
                 email,
-                amount,
+                amount: process.env.PAYSTACK_FIRST_TIME_CHARGE,
                 accountId,
                 otp,
                 phone,
@@ -86,26 +90,40 @@ class Subscription {
                 address,
             });
 
-            const subscribe = await this.subscriptionService.createSubscription(
-                {
+            console.log(chargeCard);
+
+            const newlyCharged =
+                await this.transactionService.getTransactionByEmail(email);
+
+            const subscribe = await Subscribe({
+                amount,
+                customer: newlyCharged.data.paystackCustomerCode,
+                plan: planId,
+            });
+
+            const saveSubscription =
+                await this.subscriptionService.createSubscription({
                     email,
                     plan: planName,
                     planId,
-                    subRef: response.data.data.reference,
-                    metadata: chargeCard.data.metadata,
+                    subscriptionCode: subscribe.data.subscription_code,
+                    nextPaymentDate: subscribe.data.next_payment_date,
+                    status: subscribe.data.status,
                     userId,
                     t,
-                }
-            );
+                });
+
+            //remember to revert users money
 
             await t.commit();
 
             return {
                 success: true,
-                data: subscribe,
+                data: saveSubscription,
             };
         } catch (error) {
             await t.rollback();
+            console.log(error);
             throw new BadRequest(error);
         }
     }

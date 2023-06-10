@@ -10,8 +10,9 @@ class SubscriptionService {
         email,
         plan,
         planId,
-        subRef,
-        metadata,
+        subscriptionCode,
+        nextPaymentDate,
+        status,
         userId,
         t,
     }) {
@@ -20,8 +21,9 @@ class SubscriptionService {
                 email,
                 plan,
                 planId,
-                subRef,
-                metadata,
+                subscriptionCode,
+                nextPaymentDate,
+                status,
                 userId,
                 t,
             });

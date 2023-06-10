@@ -6,7 +6,15 @@ const { CheckAccountBalance } = require("../utils");
 const accountService = new AccountService();
 const transactionService = new TransactionService();
 
-async function creditAccount({ action, amount, accountId, metadata, t }) {
+async function creditAccount({
+    action,
+    amount,
+    accountId,
+    metadata,
+    t,
+    email,
+    paystackCustomerCode,
+}) {
     const account = await accountService.findAccountById(accountId);
 
     await accountService.increaseBalance(amount, t, accountId);
@@ -20,6 +28,8 @@ async function creditAccount({ action, amount, accountId, metadata, t }) {
         metadata,
         balanceBefore: Number(account.data.balance),
         balanceAfter: Number(account.data.balance) + Number(amount),
+        email,
+        paystackCustomerCode,
         t,
     });
 

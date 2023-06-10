@@ -21,6 +21,14 @@ module.exports = {
                 type: Sequelize.DECIMAL(20, 4),
                 allowNull: false,
             },
+            email: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            paystackCustomerCode: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
             accountId: {
                 type: Sequelize.INTEGER,
                 allowNull: false,

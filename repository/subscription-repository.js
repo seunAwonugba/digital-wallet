@@ -5,8 +5,9 @@ class SubscriptionRepository {
         email,
         plan,
         planId,
-        subRef,
-        metadata,
+        subscriptionCode,
+        nextPaymentDate,
+        status,
         userId,
         t,
     }) {
@@ -15,8 +16,9 @@ class SubscriptionRepository {
                 email,
                 plan,
                 planId,
-                subscriptionReference: subRef,
-                metadata,
+                subscriptionCode,
+                nextPaymentDate,
+                status,
                 userId,
             },
             {

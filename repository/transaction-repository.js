@@ -10,6 +10,8 @@ class TransactionRepository {
         metadata,
         balanceBefore,
         balanceAfter,
+        email,
+        paystackCustomerCode,
         t,
     }) {
         const createTransaction = await transaction.create(
@@ -22,6 +24,8 @@ class TransactionRepository {
                 metadata,
                 balanceBefore,
                 balanceAfter,
+                email,
+                paystackCustomerCode,
             },
             {
                 transaction: t,
@@ -34,6 +38,16 @@ class TransactionRepository {
 
     async getTransactionByTransactionId(transactionId) {
         const getTransaction = await transaction.findByPk(transactionId);
+
+        return getTransaction;
+    }
+
+    async getTransactionByEmail(email) {
+        const getTransaction = await transaction.findOne({
+            where: {
+                email,
+            },
+        });
 
         return getTransaction;
     }

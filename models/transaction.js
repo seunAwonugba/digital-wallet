@@ -26,6 +26,14 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DECIMAL(20, 4),
                 allowNull: false,
             },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            paystackCustomerCode: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             accountId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

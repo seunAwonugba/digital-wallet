@@ -26,12 +26,20 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            subscriptionReference: {
+            subscriptionCode: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            metadata: {
-                type: DataTypes.JSON,
+            userId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            nextPaymentDate: {
+                type: DataTypes.DATE,
+                allowNull: false,
+            },
+            status: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             userId: {
