@@ -1,3 +1,4 @@
+const { BadRequest } = require("../error");
 const { creditAccount } = require("../helper/transactions");
 const { request } = require("../request");
 const {
@@ -77,7 +78,18 @@ module.exports.SubmitPin = async (ref, pin, otp, accountId, t) => {
         return credit;
     } catch (error) {
         await t.rollback();
-        return error.response.data.data.message;
+        if (error.response && error.response.data && error.response.data.data) {
+            // Handle error response with data
+            throw new BadRequest(error.response.data.data.message);
+        } else if (error.response && error.response.data) {
+            // Handle error response without data
+            throw new BadRequest(error.response.data.message);
+        } else {
+            // Handle other errors
+            throw new BadRequest(
+                "An error occurred during the charge card process with pin"
+            );
+        }
     }
 };
 
@@ -116,11 +128,22 @@ module.exports.SubmitOtp = async (otp, ref, accountId, t) => {
             accountId,
             t
         );
-        
+
         await t.commit();
         return credit;
     } catch (error) {
         await t.rollback();
-        return error.response.data.data.message;
+        if (error.response && error.response.data && error.response.data.data) {
+            // Handle error response with data
+            throw new BadRequest(error.response.data.data.message);
+        } else if (error.response && error.response.data) {
+            // Handle error response without data
+            throw new BadRequest(error.response.data.message);
+        } else {
+            // Handle other errors
+            throw new BadRequest(
+                "An error occurred during the charge card process with otp"
+            );
+        }
     }
 };

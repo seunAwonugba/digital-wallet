@@ -106,11 +106,7 @@ class Subscription {
             };
         } catch (error) {
             await t.rollback();
-            console.log(error);
-            if (error.response.data.data) {
-                throw new BadRequest(error.response.data.data.message);
-            }
-            throw new BadRequest(error.response.data.message);
+            throw new BadRequest(error);
         }
     }
 }

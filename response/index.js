@@ -1,4 +1,4 @@
-const { SubmitPin, SubmitOtp } = require("../payment-channel");
+const { SubmitPin } = require("../payment-channel");
 
 module.exports.HandleResponseStatus = async (
     status,

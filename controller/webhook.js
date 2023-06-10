@@ -12,7 +12,6 @@ const webhook = async (req, res, next) => {
         if (!hash == req.headers["x-paystack-signature"]) {
             return;
         }
-        // console.log(req.body);
         return res.status(StatusCodes.OK).json({
             success: true,
             data: req.body,

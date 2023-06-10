@@ -86,10 +86,22 @@ class Card {
             return credit;
         } catch (error) {
             await t.rollback();
-            if (error.response.data.data) {
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.data
+            ) {
+                // Handle error response with data
                 throw new BadRequest(error.response.data.data.message);
+            } else if (error.response && error.response.data) {
+                // Handle error response without data
+                throw new BadRequest(error.response.data.message);
+            } else {
+                // Handle other errors
+                throw new BadRequest(
+                    "An error occurred during the charge card process"
+                );
             }
-            throw new BadRequest(error.response.data.message);
         }
     }
 }
