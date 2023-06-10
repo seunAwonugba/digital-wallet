@@ -17,7 +17,11 @@ module.exports = {
                 type: Sequelize.ENUM("daily", "weekly", "monthly"),
                 allowNull: false,
             },
-            reference: {
+            planId: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            subscriptionReference: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },

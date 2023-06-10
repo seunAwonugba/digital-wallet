@@ -6,7 +6,8 @@ const subscribe = async (req, res, next) => {
     try {
         const subscribe = await subscription.subscribe(
             req.body,
-            req.query.accountId
+            req.query.accountId,
+            req.query.userId
         );
 
         return res.status(StatusCodes.CREATED).json(subscribe);

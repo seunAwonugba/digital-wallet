@@ -1,8 +1,28 @@
 const { subscription } = require("../models");
 
 class SubscriptionRepository {
-    async createSubscription(data) {
-        const createSubscription = await subscription.create(data);
+    async createSubscription({
+        email,
+        plan,
+        planId,
+        subRef,
+        metadata,
+        userId,
+        t,
+    }) {
+        const createSubscription = await subscription.create(
+            {
+                email,
+                plan,
+                planId,
+                subscriptionReference: subRef,
+                metadata,
+                userId,
+            },
+            {
+                transaction: t,
+            }
+        );
 
         return createSubscription;
     }

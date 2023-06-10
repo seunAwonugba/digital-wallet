@@ -11,30 +11,31 @@ class Subscription {
         this.card = new Card();
     }
 
-    async subscribe(data, accountId) {
+    async subscribe(data, accountId, userId) {
         const email = data.email;
-        let plan;
+        const planName = data.plan;
+        let planId;
         let amount;
 
         if (!email) {
             throw new BadRequest("Email address is required for subscription");
         }
 
-        if (!data.plan) {
+        if (!planName) {
             throw new BadRequest("Kindly select a plan");
         }
 
-        switch (data.plan) {
+        switch (planName) {
             case "monthly":
-                plan = process.env.PAYSTACK_MONTHLY_CODE;
+                planId = process.env.PAYSTACK_MONTHLY_CODE;
                 amount = process.env.PAYSTACK_MONTHLY_AMOUNT;
                 break;
             case "weekly":
-                plan = process.env.PAYSTACK_WEEKLY_PLAN_CODE;
+                planId = process.env.PAYSTACK_WEEKLY_PLAN_CODE;
                 amount = process.env.PAYSTACK_WEEKLY_AMOUNT;
                 break;
             case "daily":
-                plan = process.env.PAYSTACK_DAILY_PLAN_CODE;
+                planId = process.env.PAYSTACK_DAILY_PLAN_CODE;
                 amount = process.env.PAYSTACK_DAILY_AMOUNT;
                 break;
             default:
@@ -44,8 +45,10 @@ class Subscription {
         const body = {
             email,
             amount,
-            plan,
+            plan: planId,
         };
+
+        const t = await sequelize.transaction();
 
         try {
             const response = await request.post(
@@ -67,6 +70,7 @@ class Subscription {
             const birthday = data.phone;
             const address = data.phone;
 
+            //amount ignores the body value uses sub value
             const chargeCard = await this.card.chargeCard({
                 cardNumber,
                 cvv,
@@ -82,13 +86,26 @@ class Subscription {
                 address,
             });
 
-            console.log(chargeCard);
+            const subscribe = await this.subscriptionService.createSubscription(
+                {
+                    email,
+                    plan: planName,
+                    planId,
+                    subRef: response.data.data.reference,
+                    metadata: chargeCard.data.metadata,
+                    userId,
+                    t,
+                }
+            );
+
+            await t.commit();
 
             return {
                 success: true,
-                data: chargeCard,
+                data: subscribe,
             };
         } catch (error) {
+            await t.rollback();
             console.log(error);
             if (error.response.data.data) {
                 throw new BadRequest(error.response.data.data.message);

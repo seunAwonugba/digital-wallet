@@ -6,9 +6,25 @@ class SubscriptionService {
     constructor() {
         this.subscriptionRepository = new SubscriptionRepository();
     }
-    async createSubscription(data) {
+    async createSubscription({
+        email,
+        plan,
+        planId,
+        subRef,
+        metadata,
+        userId,
+        t,
+    }) {
         const createSubscription =
-            this.subscriptionRepository.createSubscription(data);
+            this.subscriptionRepository.createSubscription({
+                email,
+                plan,
+                planId,
+                subRef,
+                metadata,
+                userId,
+                t,
+            });
 
         return createSubscription;
     }
