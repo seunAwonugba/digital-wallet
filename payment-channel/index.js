@@ -157,6 +157,17 @@ module.exports.Subscribe = async (body) => {
         const response = await request.post("/subscription", body);
         return response.data;
     } catch (error) {
-        return error;
+        if (error.response && error.response.data && error.response.data.data) {
+            // Handle error response with data
+            throw new BadRequest(error.response.data.data.message);
+        } else if (error.response && error.response.data) {
+            // Handle error response without data
+            throw new BadRequest(error.response.data.message);
+        } else {
+            // Handle other errors
+            throw new BadRequest(
+                "An error occurred during the charge card process"
+            );
+        }
     }
 };

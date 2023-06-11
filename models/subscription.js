@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            amount: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             subscriptionCode: {
                 type: DataTypes.STRING,
                 allowNull: false,

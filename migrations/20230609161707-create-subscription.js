@@ -21,6 +21,10 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            amount: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
             subscriptionCode: {
                 type: Sequelize.STRING,
                 allowNull: false,

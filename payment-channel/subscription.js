@@ -45,6 +45,16 @@ class Subscription {
                 break;
         }
 
+        const cardNumber = data.card.number;
+        const pin = data.card.pin;
+        const cvv = data.card.cvv;
+        const expiryMonth = data.card.expiry_month;
+        const expiryYear = data.card.expiry_year;
+        const otp = data.otp;
+        const phone = data.phone;
+        const birthday = data.phone;
+        const address = data.phone;
+
         const t = await sequelize.transaction();
 
         try {
@@ -58,39 +68,60 @@ class Subscription {
                     plan: planId,
                 };
 
-                const response = await request.post("/subscription", body);
-                console.log(response);
+                await this.card.chargeCard({
+                    cardNumber,
+                    cvv,
+                    expiryMonth,
+                    expiryYear,
+                    pin,
+                    email,
+                    amount,
+                    accountId,
+                    otp,
+                    phone,
+                    birthday,
+                    address,
+                });
 
-                return response;
+                const subscribe = await Subscribe(body);
+                // console.log(subscribe.response.data);
+
+                const saveSubscription =
+                    await this.subscriptionService.createSubscription({
+                        email,
+                        plan: planName,
+                        planId,
+                        amount: subscribe.data.amount,
+                        subscriptionCode: subscribe.data.subscription_code,
+                        nextPaymentDate: subscribe.data.next_payment_date,
+                        status: subscribe.data.status,
+                        userId,
+                        t,
+                    });
+
+                await t.commit();
+
+                return {
+                    success: true,
+                    data: saveSubscription,
+                };
             }
 
-            const cardNumber = data.card.number;
-            const pin = data.card.pin;
-            const cvv = data.card.cvv;
-            const expiryMonth = data.card.expiry_month;
-            const expiryYear = data.card.expiry_year;
-            const otp = data.otp;
-            const phone = data.phone;
-            const birthday = data.phone;
-            const address = data.phone;
-
-            //amount ignores the body value uses sub value
-            const chargeCard = await this.card.chargeCard({
+            //Instantly charge user per sub plan
+            await this.card.chargeCard({
                 cardNumber,
                 cvv,
                 expiryMonth,
                 expiryYear,
                 pin,
                 email,
-                amount: process.env.PAYSTACK_FIRST_TIME_CHARGE,
+                amount,
                 accountId,
                 otp,
                 phone,
                 birthday,
                 address,
             });
-
-            console.log(chargeCard);
 
             const newlyCharged =
                 await this.transactionService.getTransactionByEmail(email);
@@ -106,14 +137,13 @@ class Subscription {
                     email,
                     plan: planName,
                     planId,
+                    amount: subscribe.data.amount,
                     subscriptionCode: subscribe.data.subscription_code,
                     nextPaymentDate: subscribe.data.next_payment_date,
                     status: subscribe.data.status,
                     userId,
                     t,
                 });
-
-            //remember to revert users money
 
             await t.commit();
 
@@ -123,7 +153,6 @@ class Subscription {
             };
         } catch (error) {
             await t.rollback();
-            console.log(error);
             throw new BadRequest(error);
         }
     }
