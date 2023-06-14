@@ -84,7 +84,6 @@ class Subscription {
                 });
 
                 const subscribe = await Subscribe(body);
-                // console.log(subscribe.response.data);
 
                 const saveSubscription =
                     await this.subscriptionService.createSubscription({
