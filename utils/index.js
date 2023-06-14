@@ -23,7 +23,8 @@ module.exports.CreateTransferRecipient = async (
     type,
     name,
     accountNumber,
-    bankCode
+    bankCode,
+    authorizationCode
 ) => {
     const body = {
         type,
@@ -31,6 +32,7 @@ module.exports.CreateTransferRecipient = async (
         account_number: accountNumber,
         bank_code: bankCode,
         currency,
+        authorization_code: authorizationCode,
     };
     try {
         const response = await request.post("/transferrecipient", body);
