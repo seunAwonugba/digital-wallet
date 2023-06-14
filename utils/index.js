@@ -18,3 +18,24 @@ module.exports.VerifyAccountDetails = async (accountNumber, bankCode) => {
         return error;
     }
 };
+
+module.exports.CreateTransferRecipient = async (
+    type,
+    name,
+    accountNumber,
+    bankCode
+) => {
+    const body = {
+        type,
+        name,
+        account_number: accountNumber,
+        bank_code: bankCode,
+        currency,
+    };
+    try {
+        const response = await request.post("/transferrecipient", body);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
