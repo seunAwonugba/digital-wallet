@@ -171,3 +171,60 @@ module.exports.Subscribe = async (body) => {
         }
     }
 };
+
+module.exports.VerifyAccountDetails = async (accountNumber, bankCode) => {
+    try {
+        const response = await request.get(
+            `/bank/resolve/?account_number=${accountNumber}&bank_code=${bankCode}`
+        );
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.data) {
+            // Handle error response with data
+            throw new BadRequest(error.response.data.data.message);
+        } else if (error.response && error.response.data) {
+            // Handle error response without data
+            throw new BadRequest(error.response.data.message);
+        } else {
+            // Handle other errors
+            throw new BadRequest(
+                "An error occurred during the charge card process"
+            );
+        }
+    }
+};
+
+module.exports.CreateTransferRecipient = async (
+    type,
+    name,
+    accountNumber,
+    bankCode,
+    currency,
+    authorizationCode
+) => {
+    const body = {
+        type,
+        name,
+        account_number: accountNumber,
+        bank_code: bankCode,
+        currency,
+        authorization_code: authorizationCode,
+    };
+    try {
+        const response = await request.post("/transferrecipient", body);
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.data) {
+            // Handle error response with data
+            throw new BadRequest(error.response.data.data.message);
+        } else if (error.response && error.response.data) {
+            // Handle error response without data
+            throw new BadRequest(error.response.data.message);
+        } else {
+            // Handle other errors
+            throw new BadRequest(
+                "An error occurred during the charge card process"
+            );
+        }
+    }
+};

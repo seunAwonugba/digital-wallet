@@ -9,6 +9,7 @@ const {
     webhookRouter,
     transaction,
     subscription,
+    transferRouter,
 } = require("./router");
 const { errorMiddleware } = require("./middleware/errormiddleware");
 const app = express();
@@ -29,6 +30,7 @@ app.use("/api/v1/user", user);
 app.use("/api/v1/webhook", webhookRouter);
 app.use("/api/v1/transaction", transaction);
 app.use("/api/v1/subscription", subscription);
+app.use("/api/v1/transfer", transferRouter);
 
 app.all("*", (req, res) => {
     res.status(StatusCodes.NOT_FOUND).json({
