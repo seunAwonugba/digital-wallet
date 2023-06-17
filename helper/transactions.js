@@ -36,7 +36,14 @@ async function creditAccount({
     return transaction;
 }
 
-async function debitAccount({ action, amount, accountId, metadata, t }) {
+async function debitAccount({
+    action,
+    amount,
+    accountId,
+    metadata,
+    t,
+    reference,
+}) {
     const account = await accountService.findAccountById(accountId);
 
     const checkAccountBalance = CheckAccountBalance(
@@ -48,21 +55,23 @@ async function debitAccount({ action, amount, accountId, metadata, t }) {
     if (!checkAccountBalance) {
         return {
             success: false,
-            data: checkAccountBalance,
+            data: "Insufficient balance",
         };
     }
 
-    await accountService.increaseBalance(-amount, t);
-
+    await accountService.increaseBalance(-amount, t, accountId);
+    
     const transaction = await transactionService.createTransaction({
         transactionType: "debit",
         action,
         amount,
         accountId: account.data.id,
-        reference: v4(),
+        reference,
         metadata,
         balanceBefore: Number(account.data.balance),
         balanceAfter: Number(account.data.balance) - Number(amount),
+        email: "n/a",
+        paystackCustomerCode: "n/a",
         t,
     });
 

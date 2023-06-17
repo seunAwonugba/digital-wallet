@@ -228,3 +228,36 @@ module.exports.CreateTransferRecipient = async (
         }
     }
 };
+
+module.exports.InitiateTransfer = async (
+    amount,
+    reference,
+    recipient,
+    reason
+) => {
+    const body = {
+        source: "wallet balance",
+        amount,
+        reference,
+        recipient,
+        reason,
+    };
+
+    try {
+        const response = await request.post("/transfer", body);
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.data) {
+            // Handle error response with data
+            throw new BadRequest(error.response.data.data.message);
+        } else if (error.response && error.response.data) {
+            // Handle error response without data
+            throw new BadRequest(error.response.data.message);
+        } else {
+            // Handle other errors
+            throw new BadRequest(
+                "An error occurred during the charge card process"
+            );
+        }
+    }
+};
