@@ -60,7 +60,7 @@ async function debitAccount({
     }
 
     await accountService.increaseBalance(-amount, t, accountId);
-    
+
     const transaction = await transactionService.createTransaction({
         transactionType: "debit",
         action,
@@ -75,10 +75,7 @@ async function debitAccount({
         t,
     });
 
-    return {
-        success: true,
-        data: transaction,
-    };
+    return transaction;
 }
 
 module.exports = { creditAccount, debitAccount };

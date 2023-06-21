@@ -247,6 +247,7 @@ module.exports.InitiateTransfer = async (
         const response = await request.post("/transfer", body);
         return response.data;
     } catch (error) {
+        console.log(error.response);
         if (error.response && error.response.data && error.response.data.data) {
             // Handle error response with data
             throw new BadRequest(error.response.data.data.message);

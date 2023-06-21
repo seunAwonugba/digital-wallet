@@ -8,7 +8,8 @@ const { sequelize } = require("../models");
 const {
     TransferRecipientService,
 } = require("../service/transfer-recipient-service");
-const { GenerateUUID4 } = require("../utils");
+const { GenerateUUID4, HashTransaction } = require("../utils");
+const { getOrSetCache } = require("../utils/redis");
 
 class Transfer {
     constructor() {
@@ -19,6 +20,21 @@ class Transfer {
             accountNumber,
             bankCode
         );
+
+        const hashData = {
+            ...verifyAccount.data,
+            accountId,
+            amount,
+            reason,
+        };
+
+        const hashTransaction = HashTransaction(hashData);
+
+        const cache = await getOrSetCache(accountId, hashTransaction);
+
+        console.log(cache);
+
+        // console.log(hashTransaction);
 
         const name = verifyAccount.data.account_name;
         let currency;
@@ -46,8 +62,6 @@ class Transfer {
         );
 
         const reference = GenerateUUID4();
-        // console.log(reference);
-
         const t = await sequelize.transaction();
 
         try {
@@ -59,6 +73,23 @@ class Transfer {
                 t,
                 reference,
             });
+
+            const hashData = {
+                accountId,
+                amount,
+                recipientCode: createTransferRecipient.data.recipient_code,
+            };
+
+            // const hashTransaction = HashTransaction(hashData);
+
+            // console.log(hashTransaction);
+
+            // await InitiateTransfer(
+            //     amount,
+            //     reference,
+            //     createTransferRecipient.data.recipient_code,
+            //     reason
+            // );
 
             await t.commit();
             return createDebit;

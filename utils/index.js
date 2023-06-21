@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
+const objectHash = require("object-hash");
 module.exports.CheckAccountBalance = (accountBalance, amount) => {
     try {
         return accountBalance > amount;
@@ -9,4 +10,8 @@ module.exports.CheckAccountBalance = (accountBalance, amount) => {
 
 module.exports.GenerateUUID4 = () => {
     return uuidv4();
+};
+
+module.exports.HashTransaction = (data) => {
+    return objectHash(data);
 };
