@@ -7,23 +7,22 @@ const getOrSetCache = async (accountId, hash) => {
             host: process.env.REDIS_HOST,
             port: process.env.REDIS_PORT,
         },
+        url: process.env.REDIS_URL,
     });
 
     client.on("error", (err) => console.log("Redis client error", err));
 
     await client.connect();
 
-    await client.sAdd(accountId, hash, (err, result) => {
-        if (err) {
-            return err;
-        } else if (!result) {
-            return false;
-        } else if (result) {
-            return true;
-        }
-        console.log(`Result -> ${result}`);
-    });
-    await client.expire(accountId, 120);
+    const getCache = await client.get(accountId);
+
+    if (getCache) {
+        return getCache == hash;
+    }
+
+    const setCache = await client.set(accountId, hash, { EX: 120 });
+
+    return setCache;
 };
 
 module.exports = { getOrSetCache };

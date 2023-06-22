@@ -3,6 +3,7 @@ const {
     CreateTransferRecipient,
     InitiateTransfer,
 } = require(".");
+const { BadRequest } = require("../error");
 const { debitAccount } = require("../helper/transactions");
 const { sequelize } = require("../models");
 const {
@@ -16,6 +17,12 @@ class Transfer {
         this.transferRecipientService = new TransferRecipientService();
     }
     async transfer(accountNumber, bankCode, type, accountId, reason, amount) {
+        if (!reason) {
+            throw new BadRequest("Reason is required");
+        }
+        if (!amount) {
+            throw new BadRequest("Provide a valid amount");
+        }
         const verifyAccount = await VerifyAccountDetails(
             accountNumber,
             bankCode
@@ -32,9 +39,9 @@ class Transfer {
 
         const cache = await getOrSetCache(accountId, hashTransaction);
 
-        console.log(cache);
-
-        // console.log(hashTransaction);
+        if (cache == true) {
+            throw new BadRequest("Possible duplicate transaction");
+        }
 
         const name = verifyAccount.data.account_name;
         let currency;
