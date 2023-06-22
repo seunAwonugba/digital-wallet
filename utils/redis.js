@@ -14,13 +14,15 @@ const getOrSetCache = async (accountId, hash) => {
 
     await client.connect();
 
-    const getCache = await client.get(accountId);
+    const getCache = await client.get(`${accountId}=>${hash}`);
 
     if (getCache) {
         return getCache == hash;
     }
 
-    const setCache = await client.set(accountId, hash, { EX: 120 });
+    const setCache = await client.set(`${accountId}=>${hash}`, hash, {
+        EX: 120,
+    });
 
     return setCache;
 };
